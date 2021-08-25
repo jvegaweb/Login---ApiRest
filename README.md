@@ -1,3 +1,76 @@
+## jwt-auth.
+## docs
+https://jwt-auth.readthedocs.io/en/develop/quick-start/
+
+## real time installation
+-Instalacion
+composer require tymon/jwt-auth
+
+
+## En config.php agregar a los providers
+Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
+
+
+## Luego se publica el provider
+php artisan vendor:publis
+Seleccionar el numero 10 que es el que corresponde a JWTAuth
+
+
+## Clave que se genera en .env
+php artisan jwt:secret
+
+
+## Modificar el archivo auth.php, modificar web po api
+
+'defaults' => [
+        'guard' => 'web',
+        'passwords' => 'users',
+    ],
+
+
+y agregar el siguiente codigo en el mismo archivo des pues de 'guards'
+ 'api' => [
+            'driver' => 'jwt',
+            'provider' => 'users',
+            'has' => false,
+        ],
+    ],
+
+
+## Se agregan estos dos metodos en el modelo user
+public function getJWTIdentifier() {
+        return $this->getKey();
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims() {
+        return [];
+    }    
+
+}
+
+
+## En el archivo api de la carpeta route se declaran las rutas:
+
+Route::group([
+
+    'middleware' => 'api',
+    'prefix' => 'auth'
+
+], function ($router) {
+
+    Route::post('login', 'App\Http\Controllers\AuthController@login');
+    Route::post('logout', 'App\Http\Controllers\AuthController@logout');
+    Route::post('refresh', 'App\Http\Controllers\AuthController@refresh');
+    Route::post('me', 'App\Http\Controllers\AuthController@me');
+
+});
+
+*********************************************************************************************************************************************************************************
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
 
 <p align="center">
@@ -21,7 +94,7 @@ Laravel is a web application framework with expressive, elegant syntax. We belie
 
 Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-## Learning Laravel
+
 
 Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
